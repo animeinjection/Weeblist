@@ -3,6 +3,7 @@ package com.animeinjection.weeblist.injection;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.animeinjection.weeblist.application.WeeblistApplication;
 import com.animeinjection.weeblist.injection.Qualifiers.ApplicationContext;
 import dagger.Binds;
 import dagger.Module;
@@ -17,5 +18,5 @@ public abstract class AppModule {
 
   @Binds
   @ApplicationContext
-  abstract Context provideApplicationContext(@ApplicationContext Application application);
+  abstract Context provideApplicationContext(@ApplicationContext WeeblistApplication application);
 }

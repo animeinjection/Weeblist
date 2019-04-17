@@ -9,7 +9,9 @@ import javax.inject.Inject;
 
 public class WeeblistApplication extends Application implements HasComponent<WeeblistComponent> {
 
-  @Inject @ApplicationContext Context applicationContext;
+  @Inject
+  @ApplicationContext
+  Context applicationContext;
   WeeblistComponent component;
 
   @Override
