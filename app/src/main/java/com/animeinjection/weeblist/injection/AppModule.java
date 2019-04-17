@@ -1,6 +1,5 @@
 package com.animeinjection.weeblist.injection;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.animeinjection.weeblist.application.WeeblistApplication;
@@ -9,7 +8,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
-@Module
+@Module(includes = {NetModule.class})
 public abstract class AppModule {
   @Provides
   static SharedPreferences provideSharedPreferences(@ApplicationContext Context context) {

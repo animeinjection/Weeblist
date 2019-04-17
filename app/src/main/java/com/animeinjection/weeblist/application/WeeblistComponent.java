@@ -6,6 +6,9 @@ import com.animeinjection.weeblist.injection.Qualifiers.ApplicationContext;
 import dagger.BindsInstance;
 import dagger.Component;
 
+import javax.inject.Singleton;
+
+@Singleton
 @Component(modules = {AppModule.class})
 public interface WeeblistComponent extends MainActivityComponent.Factory {
 
