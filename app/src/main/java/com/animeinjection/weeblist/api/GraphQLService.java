@@ -26,4 +26,3 @@ public class GraphQLService {
     return String.format(Locale.US, "%s %s", authDataStore.getTokenType(), authDataStore.getAccessToken());
   }
 }
-}

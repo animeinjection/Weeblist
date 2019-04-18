@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.animeinjection.weeblist.MainActivity.MainActivityComponent;
+import com.animeinjection.weeblist.animelist.AnimeListFragment;
 import com.animeinjection.weeblist.authorization.AuthDataStore;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 import com.animeinjection.weeblist.injection.HasComponent;
@@ -29,13 +30,16 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
     component().inject(this);
 
     Uri intentData = getIntent().getData();
-    if (intentData != null) {
+    if (intentData != null && intentData.getFragment() != null) {
       String path = intentData.getPath();
       Log.d(LOG_TAG, path);
       Log.d(LOG_TAG, intentData.getFragment());
+      String[] queryPairs = intentData.getFragment().split("&");
       Map<String, String> queryData = new HashMap<>();
-      for (String key : intentData.getQueryParameterNames()) {
-        queryData.put(key, intentData.getQueryParameter(key));
+      for (String pair : queryPairs) {
+        String[] kv = pair.split("=");
+        queryData.put(kv[0], kv[1]);
+        Log.d(LOG_TAG, String.format("%s: %s", kv[0], queryData.get(kv[0])));
       }
       authDataStore.setAuthorizationData(queryData);
     } else {
@@ -45,7 +49,10 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
     setContentView(R.layout.main_activity);
 
     if (authDataStore.hasValidAuth()) {
-      // TODO(alyssa): start the home fragment
+      getSupportFragmentManager()
+          .beginTransaction()
+          .add(R.id.main_activity_frame, new AnimeListFragment())
+          .commit();
     } else {
       getSupportFragmentManager()
           .beginTransaction()
@@ -63,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
   }
 
   @Subcomponent
-  public interface MainActivityComponent extends OAuthFragment.Injector {
+  public interface MainActivityComponent extends OAuthFragment.Injector, AnimeListFragment.Injector {
     interface Factory {
       MainActivityComponent mainActivityComponent();
     }

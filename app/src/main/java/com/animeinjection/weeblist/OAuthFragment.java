@@ -36,7 +36,7 @@ public class OAuthFragment extends Fragment {
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ComponentFetcher.fromContext(getActivity(), Injector.class).inject(this);
+    ComponentFetcher.fromContext(getContext(), Injector.class).inject(this);
   }
 
   @Nullable
