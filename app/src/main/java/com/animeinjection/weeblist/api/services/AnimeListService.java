@@ -71,7 +71,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
     }
   }
 
-  public static class AnimeListResponse extends AnilistResponse {
+  public static class AnimeListResponse implements AnilistResponse {
     @Override
     public void setResponseJson(String responseJson) {
 
