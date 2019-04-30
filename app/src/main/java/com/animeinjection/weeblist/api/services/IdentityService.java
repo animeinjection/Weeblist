@@ -3,7 +3,8 @@ package com.animeinjection.weeblist.api.services;
 import androidx.annotation.NonNull;
 import com.animeinjection.weeblist.api.AnilistRequest;
 import com.animeinjection.weeblist.api.AnilistResponse;
-import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListResponse.Factory;
+import com.animeinjection.weeblist.api.services.IdentityService.IdentityRequest;
+import com.animeinjection.weeblist.api.services.IdentityService.IdentityResponse;
 import com.animeinjection.weeblist.auth.AuthDataStore;
 import okhttp3.OkHttpClient;
 
@@ -11,11 +12,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class IdentityService extends GraphQLService {
+public class IdentityService extends GraphQLService<IdentityRequest, IdentityResponse> {
 
   @Inject
   public IdentityService(OkHttpClient okHttpClient, AuthDataStore authDataStore) {
-    super(okHttpClient, authDataStore, new Factory());
+    super(okHttpClient, authDataStore, new IdentityResponse.Factory());
   }
 
   public static class IdentityRequest implements AnilistRequest {

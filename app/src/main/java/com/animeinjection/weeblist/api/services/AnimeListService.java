@@ -5,7 +5,6 @@ import com.animeinjection.weeblist.api.AnilistRequest;
 import com.animeinjection.weeblist.api.AnilistResponse;
 import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListRequest;
 import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListResponse;
-import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListResponse.Factory;
 import com.animeinjection.weeblist.auth.AuthDataStore;
 import com.animeinjection.weeblist.identity.Identity;
 import com.animeinjection.weeblist.identity.IdentityStore;
@@ -21,7 +20,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
 
   @Inject
   public AnimeListService(OkHttpClient okHttpClient, AuthDataStore authDataStore, IdentityStore identityStore) {
-    super(okHttpClient, authDataStore, new Factory());
+    super(okHttpClient, authDataStore, new AnimeListResponse.Factory());
     this.identityStore = identityStore;
   }
 
@@ -77,7 +76,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
 
     }
 
-    public static class Factory implements AnilistResponse.Factory<AnimeListResponse> {
+    private static class Factory implements AnilistResponse.Factory<AnimeListResponse> {
       @Override
       public AnimeListResponse newResponseObject() {
         return new AnimeListResponse();
