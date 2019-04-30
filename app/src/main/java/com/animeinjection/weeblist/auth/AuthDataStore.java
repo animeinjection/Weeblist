@@ -1,4 +1,4 @@
-package com.animeinjection.weeblist.authorization;
+package com.animeinjection.weeblist.auth;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -57,5 +57,12 @@ public class AuthDataStore {
 
   public String getTokenType() {
     return getSharedPrefs().getString(TOKEN_TYPE_KEY, "Bearer");
+  }
+
+  public void logOut() {
+    getSharedPrefs()
+        .edit()
+        .clear()
+        .apply();
   }
 }

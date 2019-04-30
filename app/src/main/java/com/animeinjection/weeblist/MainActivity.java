@@ -1,6 +1,5 @@
 package com.animeinjection.weeblist;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,7 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.animeinjection.weeblist.MainActivity.MainActivityComponent;
 import com.animeinjection.weeblist.animelist.AnimeListFragment;
-import com.animeinjection.weeblist.authorization.AuthDataStore;
+import com.animeinjection.weeblist.auth.AuthDataStore;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 import com.animeinjection.weeblist.injection.HasComponent;
 import dagger.Subcomponent;

@@ -7,16 +7,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.animeinjection.weeblist.api.GraphQLService;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 import com.animeinjection.weeblist.injection.Qualifiers.ApplicationContext;
 
 import javax.inject.Inject;
-import java.net.URL;
 
 public class OAuthFragment extends Fragment {
   private static final String OAUTH_AUTHORIZATION_ENDPOINT = "https://anilist.co/api/v2/oauth/authorize";
@@ -27,7 +24,6 @@ public class OAuthFragment extends Fragment {
     void inject(OAuthFragment fragment);
   }
 
-  @Inject GraphQLService graphQLService;
   @Inject @ApplicationContext Context applicationContext;
 
   View loginButton;

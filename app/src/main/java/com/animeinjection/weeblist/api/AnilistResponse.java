@@ -1,4 +1,9 @@
 package com.animeinjection.weeblist.api;
 
-public class AnilistResponse {
+public abstract class AnilistResponse {
+  public abstract void setResponseJson(String responseJson);
+
+  public interface Factory<T> {
+    T newResponseObject();
+  }
 }
