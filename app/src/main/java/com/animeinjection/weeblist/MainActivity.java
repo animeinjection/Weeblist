@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
           identityStore.logIn(Identity.create(response.getUserName(), response.getUserId()));
           transitionToAnimeList();
         }, e -> {
+          Log.e(LOG_TAG, "identity request failed!", e);
           Toast.makeText(MainActivity.this, "Failed to get user data", Toast.LENGTH_LONG).show();
         }));
       } else {

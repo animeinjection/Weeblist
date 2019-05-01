@@ -34,7 +34,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
     return new AnimeListRequest(identityStore.getIdentity());
   }
 
-  public static class AnimeListRequest implements AnilistRequest {
+  public static class AnimeListRequest extends AnilistRequest {
     private static final String REQUEST_BODY_FORMAT =
         "{\n" +
             "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\n" +
@@ -66,7 +66,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
 
     @NonNull
     @Override
-    public String buildGraphQLRequestBody() {
+    public String buildGraphQLQuery() {
       return String.format(Locale.US, REQUEST_BODY_FORMAT, identity.getUserId());
     }
   }

@@ -10,5 +10,7 @@ public class Query {
     public MediaListCollection mediaListCollection;
     @SerializedName("User")
     public User user;
+    @SerializedName("Viewer")
+    public User viewer;
   }
 }

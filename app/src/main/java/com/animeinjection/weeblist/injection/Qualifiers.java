@@ -14,4 +14,10 @@ public class Qualifiers {
   @Documented
   @Target({FIELD, PARAMETER, METHOD})
   public @interface ApplicationContext {}
+
+  @Qualifier
+  @Retention(RUNTIME)
+  @Documented
+  @Target({FIELD, PARAMETER, METHOD})
+  public @interface Ui {}
 }
