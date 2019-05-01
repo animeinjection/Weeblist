@@ -19,18 +19,35 @@ public class IdentityService extends GraphQLService<IdentityRequest, IdentityRes
     super(okHttpClient, authDataStore, new IdentityResponse.Factory());
   }
 
+  public IdentityRequest newRequest() {
+    return new IdentityRequest();
+  }
+
   public static class IdentityRequest implements AnilistRequest {
+    private static final String REQUEST =
+        "{\n" +
+            "  Viewer {\n" +
+            "    id\n" +
+            "    name\n" +
+            "    avatar\n" +
+            "  }\n" +
+            "}";
+
     @NonNull
     @Override
     public String buildGraphQLRequestBody() {
-      return null;
+      return REQUEST;
     }
   }
 
-  public static class IdentityResponse implements AnilistResponse {
-    @Override
-    public void setResponseJson(String responseJson) {
+  public static class IdentityResponse extends AnilistResponse {
 
+    public String getUserName() {
+      return parsedResponse.data.user.name;
+    }
+
+    public String getUserId() {
+      return String.valueOf(parsedResponse.data.user.id);
     }
 
     private static class Factory implements AnilistResponse.Factory<IdentityResponse> {

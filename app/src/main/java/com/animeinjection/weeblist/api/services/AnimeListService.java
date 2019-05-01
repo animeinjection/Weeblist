@@ -3,15 +3,21 @@ package com.animeinjection.weeblist.api.services;
 import androidx.annotation.NonNull;
 import com.animeinjection.weeblist.api.AnilistRequest;
 import com.animeinjection.weeblist.api.AnilistResponse;
+import com.animeinjection.weeblist.api.objects.MediaListEntry;
+import com.animeinjection.weeblist.api.objects.MediaListGroup;
+import com.animeinjection.weeblist.api.objects.MediaListStatus;
 import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListRequest;
 import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListResponse;
 import com.animeinjection.weeblist.auth.AuthDataStore;
 import com.animeinjection.weeblist.identity.Identity;
 import com.animeinjection.weeblist.identity.IdentityStore;
+import com.google.common.collect.ImmutableList;
 import okhttp3.OkHttpClient;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 @Singleton
@@ -31,16 +37,11 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
   public static class AnimeListRequest implements AnilistRequest {
     private static final String REQUEST_BODY_FORMAT =
         "{\n" +
-            "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC)\n" +
-            "  {\n" +
-            "    lists\n" +
-            "    {\n" +
-            "      entries\n" +
-            "      {\n" +
-            "        media\n" +
-            "        {\n" +
-            "          title \n" +
-            "          {\n" +
+            "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\n" +
+            "    lists {\n" +
+            "      entries {\n" +
+            "        media {\n" +
+            "          title {\n" +
             "            romaji\n" +
             "            english\n" +
             "            native\n" +
@@ -70,10 +71,16 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
     }
   }
 
-  public static class AnimeListResponse implements AnilistResponse {
-    @Override
-    public void setResponseJson(String responseJson) {
+  public static class AnimeListResponse extends AnilistResponse {
 
+    public List<MediaListEntry> getCurrentlyWatching() {
+      ImmutableList.Builder<MediaListEntry> listBuilder = ImmutableList.builder();
+      for (MediaListGroup group : parsedResponse.data.mediaListCollection.lists) {
+        if (group.status == MediaListStatus.CURRENT) {
+          listBuilder.addAll(Arrays.asList(group.entries));
+        }
+      }
+      return listBuilder.build();
     }
 
     private static class Factory implements AnilistResponse.Factory<AnimeListResponse> {

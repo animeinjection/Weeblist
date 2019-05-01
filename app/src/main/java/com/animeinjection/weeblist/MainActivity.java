@@ -3,11 +3,18 @@ package com.animeinjection.weeblist;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.animeinjection.weeblist.MainActivity.MainActivityComponent;
 import com.animeinjection.weeblist.animelist.AnimeListFragment;
+import com.animeinjection.weeblist.api.ServiceListener;
+import com.animeinjection.weeblist.api.services.IdentityService;
+import com.animeinjection.weeblist.api.services.IdentityService.IdentityRequest;
 import com.animeinjection.weeblist.auth.AuthDataStore;
+import com.animeinjection.weeblist.identity.Identity;
+import com.animeinjection.weeblist.identity.IdentityStore;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 import com.animeinjection.weeblist.injection.HasComponent;
 import dagger.Subcomponent;
@@ -20,8 +27,11 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
   private static final String LOG_TAG = "MainActivity";
 
   @Inject AuthDataStore authDataStore;
+  @Inject IdentityStore identityStore;
+  @Inject IdentityService identityService;
 
   private MainActivityComponent component;
+  private View loadingSpinner;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,18 +56,40 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
     }
 
     setContentView(R.layout.main_activity);
+    loadingSpinner = findViewById(R.id.loading_spinner);
 
     if (authDataStore.hasValidAuth()) {
-      getSupportFragmentManager()
-          .beginTransaction()
-          .add(R.id.main_activity_frame, new AnimeListFragment())
-          .commit();
+      if (identityStore.getIdentity() == null) {
+        loadingSpinner.setVisibility(View.VISIBLE);
+        IdentityRequest request = identityService.newRequest();
+        identityService.sendRequest(request, ServiceListener.from(response -> {
+          identityStore.logIn(Identity.create(response.getUserName(), response.getUserId()));
+          transitionToAnimeList();
+        }, e -> {
+          Toast.makeText(MainActivity.this, "Failed to get user data", Toast.LENGTH_LONG).show();
+        }));
+      } else {
+        transitionToAnimeList();
+      }
+
     } else {
-      getSupportFragmentManager()
-          .beginTransaction()
-          .add(R.id.main_activity_frame, new OAuthFragment())
-          .commit();
+      transitionToAuthorization();
     }
+  }
+
+  private void transitionToAnimeList() {
+    getSupportFragmentManager()
+        .beginTransaction()
+        .add(R.id.fragment, new AnimeListFragment())
+        .commit();
+    loadingSpinner.setVisibility(View.GONE);
+  }
+
+  private void transitionToAuthorization() {
+    getSupportFragmentManager()
+        .beginTransaction()
+        .add(R.id.fragment, new OAuthFragment())
+        .commit();
   }
 
   public MainActivityComponent component() {

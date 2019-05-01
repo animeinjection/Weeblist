@@ -7,7 +7,7 @@ public abstract class Identity {
   public abstract String getUserName();
   public abstract String getUserId();
 
-  static Identity create(String userName, String userId) {
+  public static Identity create(String userName, String userId) {
     return new AutoValue_Identity(userName, userId);
   }
 }

@@ -6,5 +6,18 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_light">
 
+  <ProgressBar
+      android:id="@+id/loading_spinner"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"
+      android:indeterminate="true"
+      style="@style/Widget.AppCompat.ProgressBar" />
+
+  <FrameLayout
+      android:id="@+id/fragment"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+
 
 </FrameLayout>
