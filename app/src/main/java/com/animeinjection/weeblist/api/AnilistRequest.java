@@ -10,11 +10,14 @@ public abstract class AnilistRequest {
 
   protected abstract @NonNull String buildGraphQLQuery();
 
+  protected abstract void validate();
+
   protected @NonNull String buildGraphQLVariables() {
     return DEFAULT_VARIABLES;
   }
 
   public String buildRequestBody() {
+    validate();
     return String.format(Locale.US, REQUEST_BODY_FORMAT, buildGraphQLQuery(), buildGraphQLVariables());
   }
 

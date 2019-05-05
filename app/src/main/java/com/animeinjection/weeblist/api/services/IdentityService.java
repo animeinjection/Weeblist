@@ -41,6 +41,11 @@ public class IdentityService extends GraphQLService<IdentityRequest, IdentityRes
     public String buildGraphQLQuery() {
       return REQUEST;
     }
+
+    @Override
+    protected void validate() {
+      // No fields to validate
+    }
   }
 
   public static class IdentityResponse extends AnilistResponse {

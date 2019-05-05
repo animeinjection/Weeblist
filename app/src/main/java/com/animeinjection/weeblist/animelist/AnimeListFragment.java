@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,8 @@ import com.animeinjection.weeblist.api.ServiceListener;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
 import com.animeinjection.weeblist.api.services.GetAnimeListService;
 import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
+import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService;
+import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService.UpdateMediaListEntryRequest;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 
 import javax.inject.Inject;
@@ -27,6 +30,7 @@ public class AnimeListFragment extends Fragment {
   private static final String LOG_TAG = "AnimeListFragment";
 
   @Inject GetAnimeListService getAnimeListService;
+  @Inject UpdateMediaListEntryService updateMediaListEntryService;
 
   private RecyclerView recyclerView;
   private AnimeListAdapter adapter;
@@ -45,7 +49,7 @@ public class AnimeListFragment extends Fragment {
       @Nullable Bundle savedInstanceState) {
     View root = inflater.inflate(R.layout.anime_list_fragment, container, false);
     recyclerView = root.findViewById(R.id.recycler_view);
-    adapter = new AnimeListAdapter(getContext());
+    adapter = new AnimeListAdapter(getContext(), updateMediaListEntryService);
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -74,37 +78,71 @@ public class AnimeListFragment extends Fragment {
   }
 
   private static class AnimeItemHolder extends RecyclerView.ViewHolder {
-    private TextView titleView;
-    private TextView progressView;
+    private final UpdateMediaListEntryService updateMediaListEntryService;
+    private final TextView titleView;
+    private final TextView progressView;
+    private final View incrementProgressButton;
 
-    public AnimeItemHolder(View v) {
+    private MediaListEntry mediaListEntry;
+
+    public AnimeItemHolder(View v, UpdateMediaListEntryService updateMediaListEntryService) {
       super(v);
+      this.updateMediaListEntryService = updateMediaListEntryService;
       titleView = v.findViewById(R.id.title);
       progressView = v.findViewById(R.id.progress);
+      incrementProgressButton = v.findViewById(R.id.plus_button);
     }
 
     public void bindData(MediaListEntry listEntry) {
+      mediaListEntry = listEntry;
       titleView.setText(listEntry.media.title.userPreferred);
       progressView.setText(
-          progressView.getContext().getString(
+          itemView.getContext().getString(
               R.string.progress_format, listEntry.progress, listEntry.media.episodes));
+      incrementProgressButton.setOnClickListener(this::onIncrementProgress);
+    }
+
+    private void onIncrementProgress(View progressButton) {
+      progressButton.setEnabled(false);
+      UpdateMediaListEntryRequest request = updateMediaListEntryService.newRequest();
+      request.setMediaListEntryId(mediaListEntry.id);
+      request.setProgress(mediaListEntry.progress + 1);
+      updateMediaListEntryService.sendRequest(request, ServiceListener.from(response -> {
+            if (itemView.getContext() == null) {
+              return;
+            }
+            mediaListEntry.progress = response.getProgress();
+            progressView.setText(itemView.getContext().getString(
+                R.string.progress_format, mediaListEntry.progress, mediaListEntry.media.episodes));
+            progressButton.setEnabled(true);
+          },
+          e -> {
+            Log.e(LOG_TAG, "Failed to update progress", e);
+            if (itemView.getContext() == null) {
+              return;
+            }
+            Toast.makeText(itemView.getContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
+            progressButton.setEnabled(true);
+          }));
     }
   }
 
   private static class AnimeListAdapter extends RecyclerView.Adapter<AnimeItemHolder> {
 
-    private Context context;
-    private List<MediaListEntry> entries = new ArrayList<>();
+    private final Context context;
+    private final UpdateMediaListEntryService updateMediaListEntryService;
+    private final List<MediaListEntry> entries = new ArrayList<>();
 
-    public AnimeListAdapter(Context context) {
+    public AnimeListAdapter(Context context, UpdateMediaListEntryService updateMediaListEntryService) {
       this.context = context;
+      this.updateMediaListEntryService = updateMediaListEntryService;
     }
 
     @NonNull
     @Override
     public AnimeItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
       View v = LayoutInflater.from(context).inflate(R.layout.anime_item, parent, false);
-      return new AnimeItemHolder(v);
+      return new AnimeItemHolder(v, updateMediaListEntryService);
     }
 
     @Override

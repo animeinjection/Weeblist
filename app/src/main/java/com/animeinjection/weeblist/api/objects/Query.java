@@ -12,5 +12,7 @@ public class Query {
     public User user;
     @SerializedName("Viewer")
     public User viewer;
+    @SerializedName("SaveMediaListEntry")
+    public MediaListEntry saveMediaListEntry;
   }
 }

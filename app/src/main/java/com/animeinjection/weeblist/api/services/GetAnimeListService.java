@@ -36,10 +36,11 @@ public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, Get
 
   public static class GetAnimeListRequest extends AnilistRequest {
     private static final String REQUEST_BODY_FORMAT =
-        "{\\n" +
+        "query {\\n" +
             "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\\n" +
             "    lists {\\n" +
             "      entries {\\n" +
+            "        id\\n" +
             "        media {\\n" +
             "          title {\\n" +
             "            romaji\\n" +
@@ -55,8 +56,8 @@ public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, Get
             "        score\\n" +
             "        status\\n" +
             "        progress\\n" +
-            "      } \\n" +
-            "      status " +
+            "      }\\n" +
+            "      status\\n" +
             "    }\\n" +
             "  }\\n" +
             "}";
@@ -71,6 +72,11 @@ public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, Get
     @Override
     public String buildGraphQLQuery() {
       return String.format(Locale.US, REQUEST_BODY_FORMAT, identity.getUserId());
+    }
+
+    @Override
+    protected void validate() {
+      // No fields to validate
     }
   }
 

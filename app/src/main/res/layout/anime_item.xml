@@ -27,6 +27,7 @@
       android:layout_height="wrap_content"
       android:src="@drawable/ic_plus_box_24"
       android:layout_marginLeft="10dp"
-      android:layout_gravity="center_vertical"/>
+      android:layout_gravity="center_vertical"
+      android:background="?attr/selectableItemBackgroundBorderless" />
 
 </LinearLayout>

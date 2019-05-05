@@ -15,7 +15,7 @@ public abstract class AnilistResponse {
     parsedResponse = gson.fromJson(responseJson, Query.class);
   }
 
-  public interface Factory<T> {
+  public interface Factory<T extends AnilistResponse> {
     T newResponseObject();
   }
 }
