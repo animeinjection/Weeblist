@@ -31,8 +31,8 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
                 + "id: %s"
                 + "%s" // progress
                 + "%s) {" //score
-                    + "id "
-                    + "progress"
+//                    + "id "
+//                    + "progress"
                 +"}"
             + "}";
     private static final String PROGRESS_FORMAT = ", progress: %s";

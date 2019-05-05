@@ -1,13 +1,13 @@
 package com.animeinjection.weeblist.api;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 
-public interface ServiceListener<T> {
+public interface ServiceListener<T extends AnilistResponse> {
   void onResponse(T response);
-  void onError(IOException error);
+  void onError(AnilistError error);
 
-  static <T> ServiceListener<T> from(Consumer<T> onResponse, Consumer<IOException> onError) {
+  static <T extends AnilistResponse> ServiceListener<T> from(
+      Consumer<T> onResponse, Consumer<AnilistError> onError) {
     return new ServiceListener<T>() {
       @Override
       public void onResponse(T response) {
@@ -15,7 +15,7 @@ public interface ServiceListener<T> {
       }
 
       @Override
-      public void onError(IOException error) {
+      public void onError(AnilistError error) {
         onError.accept(error);
       }
     };

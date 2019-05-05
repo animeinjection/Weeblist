@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Query {
   public QueryData data;
+  public Error[] errors;
 
   public static class QueryData {
     @SerializedName("MediaListCollection")

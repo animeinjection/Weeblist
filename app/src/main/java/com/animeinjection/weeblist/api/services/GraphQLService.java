@@ -1,6 +1,7 @@
 package com.animeinjection.weeblist.api.services;
 
 import android.os.Handler;
+import com.animeinjection.weeblist.api.AnilistError;
 import com.animeinjection.weeblist.api.AnilistRequest;
 import com.animeinjection.weeblist.api.AnilistResponse;
 import com.animeinjection.weeblist.api.ServiceListener;
@@ -44,7 +45,7 @@ public abstract class GraphQLService<RQ extends AnilistRequest, RS extends Anili
     return new Callback() {
       @Override
       public void onFailure(Call call, IOException e) {
-        uiThreadHandler.post(() -> listener.onError(e));
+        uiThreadHandler.post(() -> listener.onError(new AnilistError(e)));
       }
 
       @Override
@@ -55,8 +56,8 @@ public abstract class GraphQLService<RQ extends AnilistRequest, RS extends Anili
             responseObject.setResponseJson(response.body().string());
           }
           uiThreadHandler.post(() -> listener.onResponse(responseObject));
-        } catch (Exception e) {
-          uiThreadHandler.post(() -> listener.onError(new IOException(e)));
+        } catch (AnilistError e) {
+          uiThreadHandler.post(() -> listener.onError(e));
         }
       }
     };
