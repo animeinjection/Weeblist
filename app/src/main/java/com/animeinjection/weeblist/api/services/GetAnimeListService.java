@@ -6,8 +6,8 @@ import com.animeinjection.weeblist.api.AnilistResponse;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
 import com.animeinjection.weeblist.api.objects.MediaListGroup;
 import com.animeinjection.weeblist.api.objects.MediaListStatus;
-import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListRequest;
-import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListResponse;
+import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
+import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListResponse;
 import com.animeinjection.weeblist.auth.AuthDataStore;
 import com.animeinjection.weeblist.identity.Identity;
 import com.animeinjection.weeblist.identity.IdentityStore;
@@ -21,20 +21,20 @@ import java.util.List;
 import java.util.Locale;
 
 @Singleton
-public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeListResponse> {
+public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, GetAnimeListResponse> {
   private final IdentityStore identityStore;
 
   @Inject
-  public AnimeListService(OkHttpClient okHttpClient, AuthDataStore authDataStore, IdentityStore identityStore) {
-    super(okHttpClient, authDataStore, new AnimeListResponse.Factory());
+  public GetAnimeListService(OkHttpClient okHttpClient, AuthDataStore authDataStore, IdentityStore identityStore) {
+    super(okHttpClient, authDataStore, new GetAnimeListResponse.Factory());
     this.identityStore = identityStore;
   }
 
-  public AnimeListRequest newRequest() {
-    return new AnimeListRequest(identityStore.getIdentity());
+  public GetAnimeListRequest newRequest() {
+    return new GetAnimeListRequest(identityStore.getIdentity());
   }
 
-  public static class AnimeListRequest extends AnilistRequest {
+  public static class GetAnimeListRequest extends AnilistRequest {
     private static final String REQUEST_BODY_FORMAT =
         "{\\n" +
             "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\\n" +
@@ -63,7 +63,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
 
     private final Identity identity;
 
-    public AnimeListRequest(Identity identity) {
+    public GetAnimeListRequest(Identity identity) {
       this.identity = identity;
     }
 
@@ -74,7 +74,7 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
     }
   }
 
-  public static class AnimeListResponse extends AnilistResponse {
+  public static class GetAnimeListResponse extends AnilistResponse {
 
     public List<MediaListEntry> getCurrentlyWatching() {
       ImmutableList.Builder<MediaListEntry> listBuilder = ImmutableList.builder();
@@ -86,10 +86,10 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
       return listBuilder.build();
     }
 
-    private static class Factory implements AnilistResponse.Factory<AnimeListResponse> {
+    private static class Factory implements AnilistResponse.Factory<GetAnimeListResponse> {
       @Override
-      public AnimeListResponse newResponseObject() {
-        return new AnimeListResponse();
+      public GetAnimeListResponse newResponseObject() {
+        return new GetAnimeListResponse();
       }
     }
   }

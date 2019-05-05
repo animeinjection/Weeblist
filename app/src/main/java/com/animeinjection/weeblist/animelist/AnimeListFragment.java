@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.animeinjection.weeblist.R;
 import com.animeinjection.weeblist.api.ServiceListener;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
-import com.animeinjection.weeblist.api.services.AnimeListService;
-import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListRequest;
+import com.animeinjection.weeblist.api.services.GetAnimeListService;
+import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 
 import javax.inject.Inject;
@@ -26,7 +26,7 @@ import java.util.List;
 public class AnimeListFragment extends Fragment {
   private static final String LOG_TAG = "AnimeListFragment";
 
-  @Inject AnimeListService animeListService;
+  @Inject GetAnimeListService getAnimeListService;
 
   private RecyclerView recyclerView;
   private AnimeListAdapter adapter;
@@ -54,8 +54,8 @@ public class AnimeListFragment extends Fragment {
   }
 
   private void makeAnimeListRequest() {
-    AnimeListRequest request = animeListService.newRequest();
-    animeListService.sendRequest(request, ServiceListener.from(animeListResponse -> {
+    GetAnimeListRequest request = getAnimeListService.newRequest();
+    getAnimeListService.sendRequest(request, ServiceListener.from(animeListResponse -> {
           adapter.clearListEntries();
           adapter.addListEntries(animeListResponse.getCurrentlyWatching());
           adapter.notifyDataSetChanged();
