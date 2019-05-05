@@ -50,9 +50,11 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
             "          averageScore\\n" +
             "          meanScore\\n" +
             "          genres\\n" +
+            "          episodes\\n" +
             "        }\\n" +
             "        score\\n" +
             "        status\\n" +
+            "        progress\\n" +
             "      } \\n" +
             "      status " +
             "    }\\n" +

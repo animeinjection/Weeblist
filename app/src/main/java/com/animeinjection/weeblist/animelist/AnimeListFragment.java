@@ -75,14 +75,19 @@ public class AnimeListFragment extends Fragment {
 
   private static class AnimeItemHolder extends RecyclerView.ViewHolder {
     private TextView titleView;
+    private TextView progressView;
 
     public AnimeItemHolder(View v) {
       super(v);
       titleView = v.findViewById(R.id.title);
+      progressView = v.findViewById(R.id.progress);
     }
 
     public void bindData(MediaListEntry listEntry) {
       titleView.setText(listEntry.media.title.userPreferred);
+      progressView.setText(
+          progressView.getContext().getString(
+              R.string.progress_format, listEntry.progress, listEntry.media.episodes));
     }
   }
 
