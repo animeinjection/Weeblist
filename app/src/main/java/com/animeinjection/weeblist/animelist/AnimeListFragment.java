@@ -2,6 +2,7 @@ package com.animeinjection.weeblist.animelist;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,18 +13,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.animeinjection.weeblist.R;
+import com.animeinjection.weeblist.api.ServiceListener;
+import com.animeinjection.weeblist.api.objects.MediaListEntry;
+import com.animeinjection.weeblist.api.services.AnimeListService;
+import com.animeinjection.weeblist.api.services.AnimeListService.AnimeListRequest;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
-import com.google.common.collect.ImmutableList;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnimeListFragment extends Fragment {
+  private static final String LOG_TAG = "AnimeListFragment";
 
-  public interface Injector {
-    void inject(AnimeListFragment fragment);
-  }
+  @Inject AnimeListService animeListService;
 
   private RecyclerView recyclerView;
+  private AnimeListAdapter adapter;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,12 +39,38 @@ public class AnimeListFragment extends Fragment {
 
   @Nullable
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+  public View onCreateView(
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
     View root = inflater.inflate(R.layout.anime_list_fragment, container, false);
     recyclerView = root.findViewById(R.id.recycler_view);
-    recyclerView.setAdapter(new AnimeListAdapter(getContext()));
+    adapter = new AnimeListAdapter(getContext());
+    recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+    makeAnimeListRequest();
     return root;
+  }
+
+  private void makeAnimeListRequest() {
+    AnimeListRequest request = animeListService.newRequest();
+    animeListService.sendRequest(request, ServiceListener.from(animeListResponse -> {
+          adapter.clearListEntries();
+          adapter.addListEntries(animeListResponse.getCurrentlyWatching());
+          adapter.notifyDataSetChanged();
+        },
+        e -> {
+          Log.e(LOG_TAG, "error getting list from server", e);
+          transitionToError();
+        }));
+  }
+
+  private void transitionToError() {
+  }
+
+  public interface Injector {
+    void inject(AnimeListFragment fragment);
   }
 
   private static class AnimeItemHolder extends RecyclerView.ViewHolder {
@@ -49,15 +81,15 @@ public class AnimeListFragment extends Fragment {
       titleView = v.findViewById(R.id.title);
     }
 
-    public void bindData(String title) {
-      titleView.setText(title);
+    public void bindData(MediaListEntry listEntry) {
+      titleView.setText(listEntry.media.title.userPreferred);
     }
   }
 
   private static class AnimeListAdapter extends RecyclerView.Adapter<AnimeItemHolder> {
 
     private Context context;
-    private List<String> titles = ImmutableList.of("Your Favorite Anime"); // TODO(alyssa): actual data
+    private List<MediaListEntry> entries = new ArrayList<>();
 
     public AnimeListAdapter(Context context) {
       this.context = context;
@@ -72,12 +104,25 @@ public class AnimeListFragment extends Fragment {
 
     @Override
     public void onBindViewHolder(@NonNull AnimeItemHolder holder, int position) {
-      holder.bindData(titles.get(position));
+      holder.bindData(entries.get(position));
+    }
+
+    public void clearListEntries() {
+      entries.clear();
+    }
+
+    public void addListEntry(MediaListEntry listEntry) {
+      entries.add(listEntry);
+    }
+
+    public void addListEntries(List<MediaListEntry> entries) {
+      this.entries.addAll(entries);
+      Log.d(LOG_TAG, entries.toString());
     }
 
     @Override
     public int getItemCount() {
-      return titles.size();
+      return entries.size();
     }
   }
 }

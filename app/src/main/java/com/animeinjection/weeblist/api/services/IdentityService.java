@@ -25,15 +25,15 @@ public class IdentityService extends GraphQLService<IdentityRequest, IdentityRes
 
   public static class IdentityRequest extends AnilistRequest {
     private static final String REQUEST =
-        "{" +
-            "  Viewer {" +
-            "    id" +
-            "    name" +
-            "    avatar {" +
-            "      large" +
-            "      medium" +
-            "    }" +
-            "  }" +
+        "{\\n" +
+            "  Viewer {\\n" +
+            "    id\\n" +
+            "    name\\n" +
+            "    avatar {\\n" +
+            "      large\\n" +
+            "      medium\\n" +
+            "    }\\n" +
+            "  }\\n" +
             "}";
 
     @NonNull

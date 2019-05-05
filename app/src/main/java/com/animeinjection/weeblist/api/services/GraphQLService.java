@@ -49,11 +49,15 @@ public abstract class GraphQLService<RQ extends AnilistRequest, RS extends Anili
 
       @Override
       public void onResponse(Call call, Response response) throws IOException {
-        RS responseObject = responseFactory.newResponseObject();
-        if (response.body() != null) {
-          responseObject.setResponseJson(response.body().string());
+        try {
+          RS responseObject = responseFactory.newResponseObject();
+          if (response.body() != null) {
+            responseObject.setResponseJson(response.body().string());
+          }
+          uiThreadHandler.post(() -> listener.onResponse(responseObject));
+        } catch (Exception e) {
+          uiThreadHandler.post(() -> listener.onError(new IOException(e)));
         }
-        uiThreadHandler.post(() -> listener.onResponse(responseObject));
       }
     };
   }

@@ -36,26 +36,27 @@ public class AnimeListService extends GraphQLService<AnimeListRequest, AnimeList
 
   public static class AnimeListRequest extends AnilistRequest {
     private static final String REQUEST_BODY_FORMAT =
-        "{\n" +
-            "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\n" +
-            "    lists {\n" +
-            "      entries {\n" +
-            "        media {\n" +
-            "          title {\n" +
-            "            romaji\n" +
-            "            english\n" +
-            "            native\n" +
-            "            userPreferred\n" +
-            "          }\n" +
-            "          averageScore\n" +
-            "          meanScore\n" +
-            "          genres\n" +
-            "        }\n" +
-            "        score\n" +
-            "        status\n" +
-            "      } \n" +
-            "    }\n" +
-            "  }\n" +
+        "{\\n" +
+            "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\\n" +
+            "    lists {\\n" +
+            "      entries {\\n" +
+            "        media {\\n" +
+            "          title {\\n" +
+            "            romaji\\n" +
+            "            english\\n" +
+            "            native\\n" +
+            "            userPreferred\\n" +
+            "          }\\n" +
+            "          averageScore\\n" +
+            "          meanScore\\n" +
+            "          genres\\n" +
+            "        }\\n" +
+            "        score\\n" +
+            "        status\\n" +
+            "      } \\n" +
+            "      status " +
+            "    }\\n" +
+            "  }\\n" +
             "}";
 
     private final Identity identity;
