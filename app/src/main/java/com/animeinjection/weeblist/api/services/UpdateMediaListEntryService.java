@@ -31,8 +31,8 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
                 + "id: %s"
                 + "%s" // progress
                 + "%s) {" //score
-//                    + "id "
-//                    + "progress"
+                    + "id "
+                    + "progress"
                 +"}"
             + "}";
     private static final String PROGRESS_FORMAT = ", progress: %s";
@@ -79,7 +79,7 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
 
   public static class UpdateMediaListEntryResponse extends AnilistResponse {
 
-    public static class Factory implements AnilistResponse.Factory<UpdateMediaListEntryResponse> {
+    private static class Factory implements AnilistResponse.Factory<UpdateMediaListEntryResponse> {
       @Override
       public UpdateMediaListEntryResponse newResponseObject() {
         return new UpdateMediaListEntryResponse();
