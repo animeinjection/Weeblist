@@ -1,5 +1,7 @@
 package com.animeinjection.weeblist.api;
 
+import androidx.annotation.Nullable;
+
 public class AnilistError extends Exception {
   private final AnilistResponse errorResponse;
 
@@ -12,6 +14,7 @@ public class AnilistError extends Exception {
     this.errorResponse = errorResponse;
   }
 
+  @Nullable
   public AnilistResponse getErrorResponse() {
     return errorResponse;
   }

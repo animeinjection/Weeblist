@@ -15,16 +15,14 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="Title"
-        android:textSize="16sp"
-        android:textColor="@color/black_87"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:gravity="left|center_vertical"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="Progress"
-        android:textSize="16sp"
-        android:textColor="@color/black_87"
+        android:textAppearance="?attr/textAppearanceBody1"
         android:gravity="center"/>
   </LinearLayout>
 
