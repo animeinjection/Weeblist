@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:padding="10dp">
+    android:layout_height="wrap_content"
+    android:minHeight="40dp">
 
   <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/title"
       android:layout_width="0dp"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
       android:layout_weight="1"
+      android:padding="10dp"
       android:gravity="start|center_vertical"
       android:textSize="14sp"
       android:textColor="@color/black_87" />
@@ -17,7 +18,8 @@
   <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/progress"
       android:layout_width="wrap_content"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
       android:textSize="14sp"
       android:textColor="@color/black_87" />
 
@@ -25,8 +27,8 @@
       android:id="@+id/plus_button"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:src="@drawable/ic_plus_box_24"
-      android:layout_marginLeft="10dp"
+      android:src="@drawable/ic_plus_24"
+      android:padding="5dp"
       android:layout_gravity="center_vertical"
       android:background="?attr/selectableItemBackgroundBorderless" />
 
