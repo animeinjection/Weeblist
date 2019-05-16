@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -100,6 +101,7 @@ public class AnimeListFragment extends Fragment {
           itemView.getContext().getString(
               R.string.progress_format, listEntry.progress, listEntry.media.episodes));
       incrementProgressButton.setOnClickListener(this::onIncrementProgress);
+      itemView.setOnClickListener(this::onItemClick);
     }
 
     private void onIncrementProgress(View progressButton) {
@@ -124,6 +126,10 @@ public class AnimeListFragment extends Fragment {
             Toast.makeText(itemView.getContext(), "Something went wrong.", Toast.LENGTH_LONG).show();
             progressButton.setEnabled(true);
           }));
+    }
+
+    private void onItemClick(View v) {
+      EditListEntryPopupFragment.startEditListEntry((AppCompatActivity) v.getContext(), mediaListEntry);
     }
   }
 
@@ -160,7 +166,7 @@ public class AnimeListFragment extends Fragment {
 
     public void addListEntries(List<MediaListEntry> entries) {
       this.entries.addAll(entries);
-      Log.d(LOG_TAG, entries.toString());
+//      Log.d(LOG_TAG, entries.toString());
     }
 
     @Override

@@ -11,7 +11,7 @@ public abstract class AnilistResponse {
   protected Query parsedResponse;
 
   public void setResponseJson(String responseJson) throws AnilistError {
-    Log.d(LOG_TAG, responseJson);
+//    Log.d(LOG_TAG, responseJson);
     try {
       Gson gson = new Gson();
       parsedResponse = gson.fromJson(responseJson, Query.class);

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.animeinjection.weeblist.MainActivity.MainActivityComponent;
 import com.animeinjection.weeblist.animelist.AnimeListFragment;
+import com.animeinjection.weeblist.animelist.EditListEntryPopupFragment;
 import com.animeinjection.weeblist.api.ServiceListener;
 import com.animeinjection.weeblist.api.services.IdentityService;
 import com.animeinjection.weeblist.api.services.IdentityService.IdentityRequest;
@@ -102,7 +103,10 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
   }
 
   @Subcomponent
-  public interface MainActivityComponent extends OAuthFragment.Injector, AnimeListFragment.Injector {
+  public interface MainActivityComponent extends
+      OAuthFragment.Injector,
+      AnimeListFragment.Injector,
+      EditListEntryPopupFragment.Injector {
     interface Factory {
       MainActivityComponent mainActivityComponent();
     }

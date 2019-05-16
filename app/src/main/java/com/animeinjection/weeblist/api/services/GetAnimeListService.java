@@ -36,31 +36,31 @@ public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, Get
 
   public static class GetAnimeListRequest extends AnilistRequest {
     private static final String REQUEST_BODY_FORMAT =
-        "query {\\n" +
-            "  MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) {\\n" +
-            "    lists {\\n" +
-            "      entries {\\n" +
-            "        id\\n" +
-            "        media {\\n" +
-            "          title {\\n" +
-            "            romaji\\n" +
-            "            english\\n" +
-            "            native\\n" +
-            "            userPreferred\\n" +
-            "          }\\n" +
-            "          averageScore\\n" +
-            "          meanScore\\n" +
-            "          genres\\n" +
-            "          episodes\\n" +
-            "        }\\n" +
-            "        score\\n" +
-            "        status\\n" +
-            "        progress\\n" +
-            "      }\\n" +
-            "      status\\n" +
-            "    }\\n" +
-            "  }\\n" +
-            "}";
+        "query { " +
+            "MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) { " +
+                "lists { " +
+                    "entries {" +
+                        "id " +
+                        "media { " +
+                            "title { " +
+                                "romaji " +
+                                "english " +
+                                "native " +
+                                "userPreferred " +
+                            "} " +
+                            "averageScore " +
+                            "meanScore " +
+                            "genres " +
+                            "episodes " +
+                            "bannerImage" +
+                        "} " +
+                        "score " +
+                        "status " +
+                        "progress " +
+                    "} " +
+                    "status " +
+                "} " +
+            "}}";
 
     private final Identity identity;
 
