@@ -5,16 +5,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.animeinjection.weeblist.R;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
+import com.animeinjection.weeblist.api.objects.MediaListStatus;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 import com.animeinjection.weeblist.util.ImageUtils;
+import com.animeinjection.weeblist.util.AutoCompleteTextViewUtils;
 import com.google.gson.Gson;
 
 import javax.inject.Inject;
@@ -64,10 +65,23 @@ public class EditListEntryPopupFragment extends Fragment {
       @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View root = inflater.inflate(R.layout.edit_list_entry_popup_fragment, container, false);
     root.setOnClickListener(v -> dismiss());
+
     TextView title = root.findViewById(R.id.title);
     title.setText(mediaListEntry.media.title.userPreferred);
+
     ImageView banner = root.findViewById(R.id.banner_image);
     imageUtils.loadImage(mediaListEntry.media.bannerImage, banner);
+
+    AutoCompleteTextView status = root.findViewById(R.id.status);
+    AutoCompleteTextViewUtils.setupAdapterForEnum(getContext(), status, MediaListStatus.class, mediaListEntry.status);
+
+    TextView progress = root.findViewById(R.id.progress);
+    progress.setText(String.valueOf(mediaListEntry.progress));
+
+    TextView score = root.findViewById(R.id.score);
+    if (mediaListEntry.score > 0) {
+      score.setText(String.valueOf((int) mediaListEntry.score));
+    }
 
     return root;
   }

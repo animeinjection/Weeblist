@@ -12,27 +12,69 @@
       android:focusable="true"
       cardview:rippleColor="@android:color/transparent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-      <androidx.appcompat.widget.AppCompatImageView
-          android:id="@+id/banner_image"
+      <LinearLayout
           android:layout_width="match_parent"
-          android:layout_height="150dp"
-          android:scaleType="centerCrop" />
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
 
-      <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/title"
-          android:layout_width="match_parent"
-          android:layout_height="80dp"
-          android:gravity="center"
-          android:textAppearance="?attr/textAppearanceHeadline5" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/banner_image"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:textAppearance="?attr/textAppearanceHeadline5" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Status"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
 
+          <AutoCompleteTextView
+              android:id="@+id/status"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:editable="false" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Score">
+
+          <com.google.android.material.textfield.TextInputEditText
+              android:id="@+id/score"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Episode Progress">
+
+          <com.google.android.material.textfield.TextInputEditText
+              android:id="@+id/progress"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+      </LinearLayout>
+
+    </ScrollView>
 
   </com.google.android.material.card.MaterialCardView>
 

@@ -10,7 +10,7 @@
       android:orientation="horizontal"
       android:padding="10dp">
     
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -18,7 +18,7 @@
         android:textAppearance="?attr/textAppearanceBody1"
         android:gravity="left|center_vertical"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:text="Progress"
