@@ -12,69 +12,109 @@
       android:focusable="true"
       cardview:rippleColor="@android:color/transparent">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-      <LinearLayout
+      <ScrollView
+          android:id="@+id/scroll_view"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical">
+          android:layout_height="match_parent"
+          android:layout_alignParentTop="true"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentEnd="true"
+          android:layout_above="@+id/button_layout">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/banner_image"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:gravity="center"
-            android:textAppearance="?attr/textAppearanceHeadline5" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/status_layout"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Status"
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+            android:orientation="vertical">
 
-          <AutoCompleteTextView
-              android:id="@+id/status"
+          <androidx.appcompat.widget.AppCompatImageView
+              android:id="@+id/banner_image"
+              android:layout_width="match_parent"
+              android:layout_height="150dp"
+              android:scaleType="centerCrop" />
+
+          <TextView
+              android:id="@+id/title"
+              android:layout_width="match_parent"
+              android:layout_height="80dp"
+              android:gravity="center"
+              android:textAppearance="?attr/textAppearanceHeadline5" />
+
+          <com.google.android.material.textfield.TextInputLayout
+              android:id="@+id/status_layout"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:editable="false" />
+              android:hint="Status"
+              style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Score">
+          </com.google.android.material.textfield.TextInputLayout>
 
-          <com.google.android.material.textfield.TextInputEditText
-              android:id="@+id/score"
+          <com.google.android.material.textfield.TextInputLayout
+              android:id="@+id/score_layout"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content" />
+              android:layout_height="wrap_content"
+              android:hint="Score">
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Episode Progress">
+          </com.google.android.material.textfield.TextInputLayout>
 
-          <com.google.android.material.textfield.TextInputEditText
-              android:id="@+id/progress"
+          <com.google.android.material.textfield.TextInputLayout
+              android:id="@+id/progress_layout"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+              android:layout_height="wrap_content"
+              android:hint="Episode Progress">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+          </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+      </ScrollView>
+
+      <LinearLayout
+          android:id="@+id/button_layout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentBottom="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Save"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog" />
 
       </LinearLayout>
 
-    </ScrollView>
+    </RelativeLayout>
 
   </com.google.android.material.card.MaterialCardView>
 

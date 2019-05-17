@@ -15,5 +15,6 @@ public class AutoCompleteTextViewUtils {
     }
     ArrayAdapter<E> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, enumClass.getEnumConstants());
     textView.setAdapter(adapter);
+    textView.setListSelection(adapter.getPosition(initialValue));
   }
 }
