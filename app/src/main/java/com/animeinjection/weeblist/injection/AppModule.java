@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import com.animeinjection.weeblist.application.WeeblistApplication;
 import com.animeinjection.weeblist.injection.Qualifiers.ApplicationContext;
 import com.animeinjection.weeblist.injection.Qualifiers.Ui;
+import com.google.common.eventbus.EventBus;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 
+import javax.inject.Singleton;
 import java.util.concurrent.Executor;
 
 @Module(includes = {NetModule.class})
@@ -23,8 +25,8 @@ public abstract class AppModule {
   abstract Context provideApplicationContext(@ApplicationContext WeeblistApplication application);
 
   @Provides
-  @Ui
-  static Executor provideUiThreadExecutor(@ApplicationContext Context context) {
-    return context.getMainExecutor();
+  @Singleton
+  static EventBus provideEventBus() {
+    return new EventBus();
   }
 }

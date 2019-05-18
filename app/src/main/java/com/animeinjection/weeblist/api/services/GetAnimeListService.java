@@ -92,6 +92,14 @@ public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, Get
       return listBuilder.build();
     }
 
+    public List<MediaListEntry> getAllEntries() {
+      ImmutableList.Builder<MediaListEntry> listBuilder = ImmutableList.builder();
+      for (MediaListGroup group : parsedResponse.data.mediaListCollection.lists) {
+        listBuilder.addAll(Arrays.asList(group.entries));
+      }
+      return listBuilder.build();
+    }
+
     private static class Factory implements AnilistResponse.Factory<GetAnimeListResponse> {
       @Override
       public GetAnimeListResponse newResponseObject() {

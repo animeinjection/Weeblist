@@ -1,38 +1,37 @@
 package com.animeinjection.weeblist.animelist;
 
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import com.animeinjection.weeblist.MainActivity;
 import com.animeinjection.weeblist.R;
+import com.animeinjection.weeblist.api.ServiceListener;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
 import com.animeinjection.weeblist.api.objects.MediaListStatus;
+import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService;
+import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService.UpdateMediaListEntryRequest;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
 import com.animeinjection.weeblist.util.ImageUtils;
 import com.animeinjection.weeblist.util.AutoCompleteTextViewUtils;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
+import com.google.common.eventbus.EventBus;
 
 import javax.inject.Inject;
 
 public class EditListEntryPopupFragment extends Fragment {
-  public static final String LOG_TAG = "EditListEntryPopupFragment";
-  public static final String ARG_MEDIA_LIST_ENTRY = "arg_media_list_entry";
+  private static final String LOG_TAG = "EditListEntryPopupFragment";
+  private static final String ARG_MEDIA_LIST_ENTRY_ID = "arg_media_list_entry_id";
 
-  public static void startEditListEntry(AppCompatActivity activity, MediaListEntry entry) {
+  public static void startEditListEntry(MainActivity activity, MediaListEntry entry) {
     EditListEntryPopupFragment fragment = new EditListEntryPopupFragment();
     Bundle args = new Bundle();
-    Gson gson = new Gson();
-    String serialized_entry = gson.toJson(entry);
-    args.putString(ARG_MEDIA_LIST_ENTRY, serialized_entry);
+    args.putInt(ARG_MEDIA_LIST_ENTRY_ID, entry.id);
     fragment.setArguments(args);
     activity.getSupportFragmentManager()
         .beginTransaction()
@@ -41,6 +40,9 @@ public class EditListEntryPopupFragment extends Fragment {
   }
 
   @Inject ImageUtils imageUtils;
+  @Inject UpdateMediaListEntryService updateMediaListEntryService;
+  @Inject AnimeListController animeListController;
+  @Inject EventBus eventBus;
 
   public interface Injector {
     void inject(EditListEntryPopupFragment fragment);
@@ -48,6 +50,7 @@ public class EditListEntryPopupFragment extends Fragment {
 
   private MediaListEntry mediaListEntry;
   private AutoCompleteTextView status;
+  private ArrayAdapter<MediaListStatus> statusAdapter;
   private TextView progress;
   private TextInputLayout progressLayout;
   private TextView score;
@@ -58,13 +61,12 @@ public class EditListEntryPopupFragment extends Fragment {
     super.onCreate(savedInstanceState);
     ComponentFetcher.fromContext(getContext(), Injector.class).inject(this);
     Bundle args = getArguments();
-    String serializedListEntry = args == null ? null : args.getString(ARG_MEDIA_LIST_ENTRY, null);
-    if (serializedListEntry == null) {
+    mediaListEntry = animeListController.getMediaListEntry(args.getInt(ARG_MEDIA_LIST_ENTRY_ID));
+    if (mediaListEntry == null) {
       dismiss();
       return;
     }
-    Gson gson = new Gson();
-    mediaListEntry = gson.fromJson(serializedListEntry, MediaListEntry.class);
+    eventBus.register(this);
   }
 
   @Nullable
@@ -81,7 +83,8 @@ public class EditListEntryPopupFragment extends Fragment {
     imageUtils.loadImage(mediaListEntry.media.bannerImage, banner);
 
     status = root.findViewById(R.id.status);
-    AutoCompleteTextViewUtils.setupAdapterForEnum(getContext(), status, MediaListStatus.class, mediaListEntry.status);
+    statusAdapter = AutoCompleteTextViewUtils.setupAdapterForEnum(
+        getContext(), status, MediaListStatus.class, mediaListEntry.status);
 
     progress = root.findViewById(R.id.progress);
     progressLayout = root.findViewById(R.id.progress_layout);
@@ -106,6 +109,31 @@ public class EditListEntryPopupFragment extends Fragment {
     if (!checkFields()) {
       return;
     }
+
+    UpdateMediaListEntryRequest request = updateMediaListEntryService.newRequest();
+    request.setMediaListEntryId(mediaListEntry.id);
+    request.setProgress(Integer.valueOf(progress.getText().toString()));
+    if (!TextUtils.isEmpty(score.getText())) {
+      request.setScore(Integer.valueOf(score.getText().toString()));
+    }
+    if (status.getListSelection() >=0) {
+      request.setStatus(statusAdapter.getItem(status.getListSelection()));
+    }
+
+    updateMediaListEntryService.sendRequest(request, ServiceListener.from(
+        response -> {
+          mediaListEntry.progress = response.getProgress();
+          mediaListEntry.status = response.getStatus();
+          mediaListEntry.score = response.getScore();
+          animeListController.updateMediaListEntry(mediaListEntry);
+          dismiss();
+        },
+        error -> {
+          if (getContext() != null) {
+            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+          }
+        }
+    ));
   }
 
   private boolean checkFields() {
@@ -140,7 +168,6 @@ public class EditListEntryPopupFragment extends Fragment {
     } else {
       scoreLayout.setError(null);
     }
-
 
     return wasProgressSuccessful && wasRatingSuccessful;
   }

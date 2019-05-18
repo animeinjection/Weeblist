@@ -14,14 +14,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.animeinjection.weeblist.MainActivity;
 import com.animeinjection.weeblist.R;
+import com.animeinjection.weeblist.animelist.AnimeListController.AnimeListUpdateErrorEvent;
+import com.animeinjection.weeblist.animelist.AnimeListController.AnimeListUpdatedEvent;
 import com.animeinjection.weeblist.api.ServiceListener;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
+import com.animeinjection.weeblist.api.objects.MediaListStatus;
 import com.animeinjection.weeblist.api.services.GetAnimeListService;
 import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
 import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService;
 import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService.UpdateMediaListEntryRequest;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -30,8 +36,9 @@ import java.util.List;
 public class AnimeListFragment extends Fragment {
   private static final String LOG_TAG = "AnimeListFragment";
 
-  @Inject GetAnimeListService getAnimeListService;
+  @Inject AnimeListController animeListController;
   @Inject UpdateMediaListEntryService updateMediaListEntryService;
+  @Inject EventBus eventBus;
 
   private RecyclerView recyclerView;
   private AnimeListAdapter adapter;
@@ -40,6 +47,7 @@ public class AnimeListFragment extends Fragment {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ComponentFetcher.fromContext(getContext(), Injector.class).inject(this);
+    eventBus.register(this);
   }
 
   @Nullable
@@ -54,21 +62,20 @@ public class AnimeListFragment extends Fragment {
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-    makeAnimeListRequest();
+    animeListController.updateAnimeList();
     return root;
   }
 
-  private void makeAnimeListRequest() {
-    GetAnimeListRequest request = getAnimeListService.newRequest();
-    getAnimeListService.sendRequest(request, ServiceListener.from(animeListResponse -> {
-          adapter.clearListEntries();
-          adapter.addListEntries(animeListResponse.getCurrentlyWatching());
-          adapter.notifyDataSetChanged();
-        },
-        e -> {
-          Log.e(LOG_TAG, "error getting list from server", e);
-          transitionToError();
-        }));
+  @Subscribe
+  public void handleAnimeListUpdatedEvent(AnimeListUpdatedEvent event) {
+    adapter.clearListEntries();
+    adapter.addListEntries(animeListController.getAnimeListWithStatus(MediaListStatus.CURRENT));
+    adapter.notifyDataSetChanged();
+  }
+
+  @Subscribe
+  public void handleAnimeListUpdateError(AnimeListUpdateErrorEvent event) {
+    transitionToError();
   }
 
   private void transitionToError() {
@@ -129,7 +136,7 @@ public class AnimeListFragment extends Fragment {
     }
 
     private void onItemClick(View v) {
-      EditListEntryPopupFragment.startEditListEntry((AppCompatActivity) v.getContext(), mediaListEntry);
+      EditListEntryPopupFragment.startEditListEntry((MainActivity) v.getContext(), mediaListEntry);
     }
   }
 

@@ -34,11 +34,14 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
   private MainActivityComponent component;
   private View loadingSpinner;
 
+
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     component().inject(this);
 
+    // Receive the authorization data from the intent when completing oauth
     Uri intentData = getIntent().getData();
     if (intentData != null && intentData.getFragment() != null) {
       String path = intentData.getPath();

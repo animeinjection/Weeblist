@@ -1,6 +1,7 @@
 package com.animeinjection.weeblist.api.services;
 
 import android.os.Handler;
+import android.util.Log;
 import com.animeinjection.weeblist.api.AnilistError;
 import com.animeinjection.weeblist.api.AnilistRequest;
 import com.animeinjection.weeblist.api.AnilistResponse;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 public abstract class GraphQLService<RQ extends AnilistRequest, RS extends AnilistResponse> {
+  private static final String LOG_TAG = "GraphQLService";
   private static final String SERVICE_ENDPOINT = "https://graphql.anilist.co";
 
   private final OkHttpClient okHttpClient;
@@ -28,6 +30,7 @@ public abstract class GraphQLService<RQ extends AnilistRequest, RS extends Anili
 
   public void sendRequest(RQ request, ServiceListener<RS> listener) {
     String requestBody = request.buildRequestBody();
+    Log.d(LOG_TAG, "request body: " + requestBody);
     Request.Builder requestBuilder = new Request.Builder();
     requestBuilder.header("Authorization", getAuthorizationHeader())
         .header("Accept", "application/json")

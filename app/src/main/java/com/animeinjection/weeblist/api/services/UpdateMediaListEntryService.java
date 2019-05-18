@@ -1,8 +1,10 @@
 package com.animeinjection.weeblist.api.services;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import com.animeinjection.weeblist.api.AnilistRequest;
 import com.animeinjection.weeblist.api.AnilistResponse;
+import com.animeinjection.weeblist.api.objects.MediaListStatus;
 import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService.UpdateMediaListEntryRequest;
 import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService.UpdateMediaListEntryResponse;
 import com.animeinjection.weeblist.auth.AuthDataStore;
@@ -30,17 +32,22 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
             + "SaveMediaListEntry("
                 + "id: %s"
                 + "%s" // progress
-                + "%s) {" //score
+                + "%s" //score
+                + "%s) {" //status
                     + "id "
-                    + "progress"
+                    + "progress "
+                    + "status "
+                    + "score"
                 +"}"
             + "}";
     private static final String PROGRESS_FORMAT = ", progress: %s";
     private static final String SCORE_FORMAT = ", scoreRaw: %s";
+    private static final String STATUS_FORMAT = ", status: %s";
 
     private int mediaListEntryId;
     private int progress = -1;
     private int scoreRaw = -1;
+    private MediaListStatus status;
 
     public UpdateMediaListEntryRequest() {}
 
@@ -52,14 +59,28 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
       this.progress = progress;
     }
 
-    public void setScore(int scoreRaw) {
+    public void setScoreRaw(int scoreRaw) {
       this.scoreRaw = scoreRaw;
+    }
+
+    public void setScore(float score) {
+      this.scoreRaw = (int) score * 10;
+    }
+
+    public void setStatus(MediaListStatus status) {
+      this.status = status;
     }
 
     @NonNull
     @Override
     protected String buildGraphQLQuery() {
-      return String.format(Locale.US, REQUEST_BODY_FORMAT, mediaListEntryId, buildProgress(), buildScoreRaw());
+      return String.format(
+          Locale.US,
+          REQUEST_BODY_FORMAT,
+          mediaListEntryId,
+          buildProgress(),
+          buildScoreRaw(),
+          buildStatus());
     }
 
     private String buildProgress() {
@@ -68,6 +89,11 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
 
     private String buildScoreRaw() {
       return scoreRaw == -1 ? "" : String.format(Locale.US, SCORE_FORMAT, scoreRaw);
+    }
+
+    private String buildStatus() {
+      Log.d("UpdateMediaListEntryRequest", "status is " + (status == null ? "null" : status.name()));
+      return status == null ? "" : String.format(Locale.US, STATUS_FORMAT, status.name());
     }
 
     @Override
@@ -88,6 +114,14 @@ public class UpdateMediaListEntryService extends GraphQLService<UpdateMediaListE
 
     public int getProgress() {
       return parsedResponse.data.saveMediaListEntry.progress;
+    }
+
+    public MediaListStatus getStatus() {
+      return parsedResponse.data.saveMediaListEntry.status;
+    }
+
+    public float getScore() {
+      return parsedResponse.data.saveMediaListEntry.score;
     }
   }
 }
