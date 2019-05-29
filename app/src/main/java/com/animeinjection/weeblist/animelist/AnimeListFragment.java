@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,8 +20,6 @@ import com.animeinjection.weeblist.animelist.AnimeListController.AnimeListUpdate
 import com.animeinjection.weeblist.api.ServiceListener;
 import com.animeinjection.weeblist.api.objects.MediaListEntry;
 import com.animeinjection.weeblist.api.objects.MediaListStatus;
-import com.animeinjection.weeblist.api.services.GetAnimeListService;
-import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
 import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService;
 import com.animeinjection.weeblist.api.services.UpdateMediaListEntryService.UpdateMediaListEntryRequest;
 import com.animeinjection.weeblist.injection.ComponentFetcher;
@@ -33,8 +30,11 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.animeinjection.weeblist.animelist.AnimeListController.LEXICOGRAPHICAL_BY_TITLE;
+
 public class AnimeListFragment extends Fragment {
   private static final String LOG_TAG = "AnimeListFragment";
+  private static final String ARG_MEDIA_STATUS = "arg_media_status";
 
   @Inject AnimeListController animeListController;
   @Inject UpdateMediaListEntryService updateMediaListEntryService;
@@ -42,12 +42,21 @@ public class AnimeListFragment extends Fragment {
 
   private RecyclerView recyclerView;
   private AnimeListAdapter adapter;
+  private MediaListStatus listStatus;
+
+  public static AnimeListFragment newInstance(MediaListStatus status) {
+    AnimeListFragment fragment = new AnimeListFragment();
+    Bundle args = new Bundle();
+    args.putInt(ARG_MEDIA_STATUS, status.ordinal());
+    fragment.setArguments(args);
+    return fragment;
+  }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ComponentFetcher.fromContext(getContext(), Injector.class).inject(this);
-    eventBus.register(this);
+    listStatus = MediaListStatus.values()[getArguments().getInt(ARG_MEDIA_STATUS)];
   }
 
   @Nullable
@@ -61,15 +70,21 @@ public class AnimeListFragment extends Fragment {
     adapter = new AnimeListAdapter(getContext(), updateMediaListEntryService);
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-    animeListController.updateAnimeList();
+    handleAnimeListUpdatedEvent(null);
+    eventBus.register(this);
     return root;
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    eventBus.unregister(this);
   }
 
   @Subscribe
   public void handleAnimeListUpdatedEvent(AnimeListUpdatedEvent event) {
     adapter.clearListEntries();
-    adapter.addListEntries(animeListController.getAnimeListWithStatus(MediaListStatus.CURRENT));
+    adapter.addListEntries(animeListController.getAnimeListWithStatusAndSort(listStatus, LEXICOGRAPHICAL_BY_TITLE));
     adapter.notifyDataSetChanged();
   }
 

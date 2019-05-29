@@ -10,10 +10,12 @@ import com.animeinjection.weeblist.api.objects.MediaListStatus;
 import com.animeinjection.weeblist.api.services.GetAnimeListService;
 import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
 import com.animeinjection.weeblist.injection.Qualifiers.ApplicationContext;
+import com.google.common.collect.Comparators;
 import com.google.common.eventbus.EventBus;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,13 +66,24 @@ public class AnimeListController {
     eventBus.post(new AnimeListUpdatedEvent());
   }
 
+  public List<MediaListEntry> getAnimeListForPredicateAndSort(Predicate<MediaListEntry> predicate, Comparator<MediaListEntry> comparator) {
+    return mediaList.values().stream().filter(predicate).sorted(comparator).collect(Collectors.toList());
+  }
+
   public List<MediaListEntry> getAnimeListForPredicate(Predicate<MediaListEntry> predicate) {
-    return mediaList.values().stream().filter(predicate).collect(Collectors.toList());
+    return getAnimeListForPredicateAndSort(predicate, (a, b) -> 0);
   }
 
   public List<MediaListEntry> getAnimeListWithStatus(MediaListStatus status) {
     return getAnimeListForPredicate(entry -> entry.status == status);
   }
+
+  public List<MediaListEntry> getAnimeListWithStatusAndSort(MediaListStatus status, Comparator<MediaListEntry> sort) {
+    return getAnimeListForPredicateAndSort(entry -> entry.status == status, sort);
+  }
+
+  public static final Comparator<MediaListEntry> LEXICOGRAPHICAL_BY_TITLE =
+      (a, b) -> a.media.title.userPreferred.compareTo(b.media.title.userPreferred);
 
   public static class AnimeListUpdatedEvent {}
 

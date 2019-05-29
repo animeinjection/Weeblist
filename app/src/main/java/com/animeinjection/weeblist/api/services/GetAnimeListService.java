@@ -39,7 +39,7 @@ public class GetAnimeListService extends GraphQLService<GetAnimeListRequest, Get
         "query { " +
             "MediaListCollection(userId:%s, type:ANIME, sort:SCORE_DESC) { " +
                 "lists { " +
-                    "entries {" +
+                    "entries { " +
                         "id " +
                         "media { " +
                             "title { " +
