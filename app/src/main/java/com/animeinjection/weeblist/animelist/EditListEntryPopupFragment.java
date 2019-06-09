@@ -9,6 +9,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import com.animeinjection.weeblist.MainActivity;
 import com.animeinjection.weeblist.R;
 import com.animeinjection.weeblist.api.ServiceListener;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 
 public class EditListEntryPopupFragment extends Fragment {
   private static final String LOG_TAG = "EditListEntryPopupFragment";
+  private static final String FRAGMENT_TAG = "edit_list_entry_popup";
   private static final String ARG_MEDIA_LIST_ENTRY_ID = "arg_media_list_entry_id";
 
   public static void startEditListEntry(MainActivity activity, MediaListEntry entry) {
@@ -36,6 +38,7 @@ public class EditListEntryPopupFragment extends Fragment {
     activity.getSupportFragmentManager()
         .beginTransaction()
         .add(android.R.id.content, fragment)
+        .addToBackStack(FRAGMENT_TAG)
         .commit();
   }
 
@@ -177,6 +180,6 @@ public class EditListEntryPopupFragment extends Fragment {
       // Already detached, nothing to do
       return;
     }
-    getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+    getActivity().getSupportFragmentManager().popBackStack(FRAGMENT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
   }
 }
