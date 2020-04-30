@@ -40,14 +40,14 @@ public class AnimeListPagerFragment extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View root = inflater.inflate(R.layout.list_pager_fragment, container, false);
-    viewPager = root.findViewById(R.id.view_pager);
+    viewPager = root.findViewById(R.id.anime_list_pager);
     TabLayout tabLayout = root.findViewById(R.id.tab_layout);
     tabLayout.setupWithViewPager(viewPager);
-    AnimeListPagerAdapter pagerAdapter = new AnimeListPagerAdapter(getFragmentManager());
+    AnimeListPagerAdapter pagerAdapter = new AnimeListPagerAdapter(getChildFragmentManager());
     viewPager.setAdapter(pagerAdapter);
     if (savedInstanceState != null) {
       int selectedPage = savedInstanceState.getInt(STATE_SELECTED_PAGE);
-      viewPager.setCurrentItem(selectedPage, false);
+      tabLayout.selectTab(tabLayout.getTabAt(selectedPage));
     }
 
     return root;

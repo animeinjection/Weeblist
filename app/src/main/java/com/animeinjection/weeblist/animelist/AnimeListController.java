@@ -10,7 +10,6 @@ import com.animeinjection.weeblist.api.objects.MediaListStatus;
 import com.animeinjection.weeblist.api.services.GetAnimeListService;
 import com.animeinjection.weeblist.api.services.GetAnimeListService.GetAnimeListRequest;
 import com.animeinjection.weeblist.injection.Qualifiers.ApplicationContext;
-import com.google.common.collect.Comparators;
 import com.google.common.eventbus.EventBus;
 
 import javax.inject.Inject;

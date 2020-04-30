@@ -63,30 +63,32 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
     setContentView(R.layout.main_activity);
     loadingSpinner = findViewById(R.id.loading_spinner);
 
-    if (authDataStore.hasValidAuth()) {
-      if (identityStore.getIdentity() == null) {
-        loadingSpinner.setVisibility(View.VISIBLE);
-        IdentityRequest request = identityService.newRequest();
-        identityService.sendRequest(request, ServiceListener.from(response -> {
-          identityStore.logIn(Identity.create(response.getUserName(), response.getUserId()));
-          transitionToAnimeList();
-        }, e -> {
-          Log.e(LOG_TAG, "identity request failed!", e);
-          Toast.makeText(MainActivity.this, "Failed to get user data", Toast.LENGTH_LONG).show();
-        }));
-      } else {
-        transitionToAnimeList();
-      }
-
-    } else {
+    if (!authDataStore.hasValidAuth()) {
       transitionToAuthorization();
+    } else if (identityStore.getIdentity() == null) {
+      loadingSpinner.setVisibility(View.VISIBLE);
+      IdentityRequest request = identityService.newRequest();
+      identityService.sendRequest(request, ServiceListener.from(response -> {
+        identityStore.logIn(Identity.create(response.getUserName(), response.getUserId()));
+        transitionToAnimeList();
+      }, e -> {
+        Log.e(LOG_TAG, "identity request failed!", e);
+        Toast.makeText(MainActivity.this, "Failed to get user data", Toast.LENGTH_LONG).show();
+      }));
+    } else if (
+        savedInstanceState != null &&
+            getSupportFragmentManager()
+                .getFragments()
+                .stream()
+                .noneMatch((fragment) -> fragment instanceof AnimeListPagerFragment)) {
+      transitionToAnimeList();
     }
   }
 
   private void transitionToAnimeList() {
     getSupportFragmentManager()
         .beginTransaction()
-        .add(R.id.fragment, new AnimeListPagerFragment())
+        .replace(R.id.fragment, new AnimeListPagerFragment())
         .commit();
     loadingSpinner.setVisibility(View.GONE);
   }
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements HasComponent<Main
   private void transitionToAuthorization() {
     getSupportFragmentManager()
         .beginTransaction()
-        .add(R.id.fragment, new OAuthFragment())
+        .replace(R.id.fragment, new OAuthFragment())
         .commit();
   }
 
