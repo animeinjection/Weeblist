@@ -2,10 +2,12 @@ package com.animeinjection.weeblist.animelist;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import android.widget.AdapterView.OnItemSelectedListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -54,6 +56,7 @@ public class EditListEntryPopupFragment extends Fragment {
   private MediaListEntry mediaListEntry;
   private AutoCompleteTextView status;
   private ArrayAdapter<MediaListStatus> statusAdapter;
+  private MediaListStatus selectedStatus;
   private TextView progress;
   private TextInputLayout progressLayout;
   private TextView score;
@@ -89,6 +92,13 @@ public class EditListEntryPopupFragment extends Fragment {
     statusAdapter = AutoCompleteTextViewUtils.setupAdapterForEnum(
         getContext(), status, MediaListStatus.class, mediaListEntry.status);
 
+    // No way to get the selected item from the view when the dropdown isn't showing because what the fuck are they even
+    // thinking
+    status.setOnItemClickListener((parent, view, position, id) -> {
+      Log.d(LOG_TAG, "onItemClick");
+      selectedStatus = statusAdapter.getItem(position);
+    });
+
     progress = root.findViewById(R.id.progress);
     progressLayout = root.findViewById(R.id.progress_layout);
     progress.setText(String.valueOf(mediaListEntry.progress));
@@ -119,8 +129,9 @@ public class EditListEntryPopupFragment extends Fragment {
     if (!TextUtils.isEmpty(score.getText())) {
       request.setScore(Integer.valueOf(score.getText().toString()));
     }
-    if (status.getListSelection() >=0) {
-      request.setStatus(statusAdapter.getItem(status.getListSelection()));
+    Log.d(LOG_TAG, "selected status is " + selectedStatus);
+    if (selectedStatus != null) {
+      request.setStatus(selectedStatus);
     }
 
     updateMediaListEntryService.sendRequest(request, ServiceListener.from(
